@@ -1,0 +1,10 @@
+github "provivus/SwiftBaseX" "master"
+github "hkellaway/Gloss"
+github "uport-project/SwiftKeccak"
+github "mxcl/PromiseKit" ~> 4.0
+github "Alamofire/Alamofire" ~> 4.4
+github "PromiseKit/Alamofire-" ~> 1.0
+github "provivus/ABIKit" "master"
+github "provivus/IpfsKit" "master"
+github "provivus/IpcKit" "master"
+
