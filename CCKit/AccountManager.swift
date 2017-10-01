@@ -382,7 +382,7 @@ public class AccountManager
     }
     
     
-    func refresh(netId: NetworkId, client: CCKClient, _ callback: @escaping (_: Bool) -> Void)
+    public func refresh(netId: NetworkId, client: CCKClient, _ callback: @escaping (_: Bool) -> Void)
     {
         for address in self.orderedAddresses {
             _ = client.ipcClient.eth_getBalance(netId:netId, address: address as! Address, tag: .pending).then { balance -> Void in
