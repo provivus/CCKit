@@ -29,7 +29,7 @@ fileprivate func checksum(payload: ArraySlice<UInt8>) -> ArraySlice<UInt8>
     return hashArraySlice
 }
 
-class CCKClient {
+public class CCKClient {
     
     var transactionNonce:UInt = 0
     let accountManager:AccountManager
@@ -37,7 +37,7 @@ class CCKClient {
     let ipcClient:IpcClient
     let networkId: NetworkId
     
-    init?(ipfsHost: String, networkId: NetworkId, accountManager: AccountManager) {
+    public init?(ipfsHost: String, networkId: NetworkId, accountManager: AccountManager) {
         self.accountManager = accountManager
         self.ipfsClient = IpfsClient(ipfsHost:"ipfs.carechain.io" )!
         self.ipcClient = IpcClient()!
