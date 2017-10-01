@@ -12,7 +12,6 @@ enum WalletNotification: String {
     case ChangedActiveAccountNotification         = "WalletChangedActiveAccountNotification"
     case DidSyncNotification                      = "WalletDidSyncNotification"
     case DidChangeNetwork                         = "WalletDidChangeNetwork"
-    
     var notification : Notification.Name  {
         return Notification.Name(rawValue: self.rawValue )
     }
@@ -51,25 +50,19 @@ enum DataStoreKey: String {
 
 public class AccountManager
 {
-    //static let sharedInstance = AccountManager("us.proviv.claim")
     var keyChainKey = ""
     var jsonWallets = NSMutableDictionary(dictionary: [Address:String]())
     var accounts = NSMutableDictionary(dictionary: [Address:Account]())
     var orderedAddresses = NSMutableArray()
     var activeAccount:Address?
     var transactions = NSMutableDictionary(dictionary: [Address:[TransactionInfo]]())
-    
     var dataStore = CachedDataStore()
-    
     var firstRefreshDone = false
-    
-    // let keychainKey
+ 
     public init?(_ keyChainKey: String) {
         self.keyChainKey = keyChainKey
         dataStore = CachedDataStore(key: keyChainKey)
-        
         if let addressStrings = dataStore.array(forKey: DataStoreKey.UserAccounts.rawValue) {
-            
             //print("KeyChain stored addressStrings",addressStrings)
             for addressString in addressStrings {
                 let address = Address(string: addressString as! String)
@@ -81,13 +74,11 @@ public class AccountManager
         } else {
             print("No addresses in DataStore")
         }
-        
         if let active = dataStore.object(forKey: DataStoreKey.UserActiveAccount.rawValue)  {
             activeAccount = Address(string:active as! String)
         } else if orderedAddresses.count > 0 {
             activeAccount = orderedAddresses[0] as? Address
         }
-        
         NotificationCenter.default.addObserver(self, selector: #selector(notifyApplicationActive) , name: NSNotification.Name(rawValue: NSNotification.Name.UIApplicationDidBecomeActive.rawValue), object: nil)
         /*
          
@@ -109,24 +100,19 @@ public class AccountManager
         }
     }
     
-    
     func sortTransactions(transactionInfos: [TransactionInfo]) -> Void
     {
-        
         _ = transactionInfos.sorted { (a, b) -> Bool in
-            
             if a.timestamp > b.timestamp {
                 return  true
             } else if a.timestamp < b.timestamp {
                 return false
             } else if a.timestamp == b.timestamp {
-                
                 if a.hash < b.hash {
                     return true
                 } else if a.hash > b.hash {
                     return false
                 }
-                
             }
             return true
         }
@@ -135,14 +121,12 @@ public class AccountManager
     func transactionsForAddress(_ address: Address) -> [TransactionInfo]
     {
         let transactionsByHash = objectForKeyPrefix(keyPrefix: DataStoreKey.AccountTxsPrefix.rawValue, address: address)
-        
         if transactionsByHash == nil {
             return NSMutableArray(capacity: 4) as! [TransactionInfo]
         }
         let transactionsDict = transactionsByHash as! [String:[AnyHashable:Any]]
         let transactionInfos = NSMutableArray(capacity: transactionsDict.count)
         let arr = Array(transactionsDict)
-        
         for info in arr {
             let transactionInfo = TransactionInfo(from: info.value)
             //print("transactionInfo",info, transactionInfo)
@@ -177,12 +161,9 @@ public class AccountManager
         dataStore.setInteger(value , forKey: keyPrefix+address.checksumAddress)
     }
     
-    
-    
     func createAccount(_ completion: @escaping ( _ account: Account) -> Void ) {
         let newAccount = Account.randomMnemonic()
         let password = "secret"
-        
         _ = newAccount?.encryptSecretStorageJSON(password, callback: { (json) in
             
             self.accounts.setObject(newAccount!, forKey: (newAccount?.address)!)
@@ -192,11 +173,9 @@ public class AccountManager
         
     }
     
-    
     func unlockAccount(_ address: Address, completion: @escaping ( _ account: Account?) -> Void ) {
         let json = getJSON(address: address)
         let password = "secret"
-        
         Account.decryptSecretStorageJSON(json, password: password) { (account, error) in
             if  account != nil {
                 self.accounts.setObject(account!, forKey: (account?.address)!)
@@ -210,14 +189,11 @@ public class AccountManager
     func addAccount(account:Account, json: String) {
         addKeychainVaue(keyChainKey, account.address, "xclaim.proviv.us", json)
         setObject(object: json as NSObject, keyPrefix: DataStoreKey.AccountNicknamePrefix.rawValue, address: account.address)
-        
         jsonWallets.setObject(json, forKey: account.address)
         transactions.setObject(transactionsForAddress(account.address), forKey: account.address)
         orderedAddresses.add(account.address)
         saveAccountOrder()
         refreshActiveAccount()
-        
-        
         DispatchQueue.main.async {
             let userInfo = ["addAccount address": account.address as Any]
             NotificationCenter.default.post(name: WalletNotification.AddedAccountNotification.notification , object: self, userInfo: userInfo)
@@ -230,15 +206,12 @@ public class AccountManager
         if activeAccount == address || address.isEqual(to: activeAccount) {
             return
         }
-        
         activeAccount = address
         DispatchQueue.main.async {
             let userInfo = ["address" : self.activeAccount as Any]
             NotificationCenter.default.post(name: WalletNotification.ChangedActiveAccountNotification.notification , object: self, userInfo: userInfo)
         }
-        
         let checksumAddress = activeAccount?.checksumAddress!
-        
         dataStore.setObject(checksumAddress! as NSObject, forKey: DataStoreKey.UserActiveAccount.rawValue)
     }
     
@@ -254,21 +227,16 @@ public class AccountManager
             }
             i = i + 1
         }
-        
         orderedAddresses.remove(i)
-        
         refreshActiveAccount()
-        
         DispatchQueue.main.async {
             let userInfo = ["address" : account.address as Any]
             NotificationCenter.default.post(name: WalletNotification.ChangedActiveAccountNotification.notification , object: self, userInfo: userInfo)
         }
     }
     
-    
     func getJSON(address:Address) -> String {
         var json = jsonWallets[address]
-        
         if json == nil {
             json = getKeychainValue(keyChainKey, address)
             if json == nil {
@@ -296,12 +264,10 @@ public class AccountManager
                 account = Address.zero()
             }
         }
-        
         if orderedAddresses.count > 0 {
             account = orderedAddresses[0] as? Address
             setActiveAccount(address: account!)
         }
-        
     }
     
     public func debugTransactions()
@@ -386,15 +352,11 @@ public class AccountManager
     {
         for address in self.orderedAddresses {
             _ = client.ipcClient.eth_getBalance(netId:netId, address: address as! Address, tag: .pending).then { balance -> Void in
-                //print("getBalance ",balance)
                 self.setSyncDate()
                 _ = self.setBalance(address: address as! Address, balanceWei: balance)
             }
             
             _ = client.ipcClient.eth_getTransactionCount(netId:netId,address: address as! Address, tag: .pending).then { nonce -> Void in
-                
-                //print("getTransactionCount: ",nonce, "address ", address)
-                
                 self.setSyncDate()
                 self.setNonce(nonce: UInt(nonce), address: address as! Address)
             }
@@ -429,26 +391,20 @@ public class AccountManager
     
     func setBalance(address:Address,balanceWei:BigNumber) -> Bool
     {
-        
         if balanceWei.isEqual(balance(address)) {
             return false
         }
-        
         setObject(object: balanceWei.hexString! as NSObject, keyPrefix: DataStoreKey.AccountBalancePrefix.rawValue, address: address)
-        
-        
         DispatchQueue.main.async {
             let userInfo = ["address":address as Any, "balance": balanceWei as Any]
             NotificationCenter.default.post(name: WalletNotification.BalanceChangedNotification.notification , object: self, userInfo: userInfo)
         }
-        
         return true
     }
     
     func balance(_ address:Address) -> BigNumber
     {
         let balanceHex = objectForKeyPrefix(keyPrefix: DataStoreKey.AccountBalancePrefix.rawValue, address:address)
-        
         if balanceHex != nil
         {
             return BigNumber(hexString: balanceHex as! String)
@@ -469,17 +425,14 @@ public class AccountManager
     
     
     func setSyncDate() {
-        
         let syncDate = Date.timeIntervalSinceReferenceDate
         let changed = dataStore.setTimeInterval(syncDate, forKey: DataStoreKey.NetworkSyncDate.rawValue)
-        
         if changed {
             DispatchQueue.main.async {
                 let userInfo = ["syncDate": syncDate]
                 NotificationCenter.default.post(name: WalletNotification.DidSyncNotification.notification , object: self, userInfo: userInfo)
             }
         }
-        
     }
     
     func syncDate() -> TimeInterval
@@ -491,14 +444,12 @@ public class AccountManager
     func setBlocknumber(blockNumber: Int)
     {
         dataStore.setInteger(blockNumber, forKey: DataStoreKey.NetworkBlockNumber.rawValue)
-        
         if activeAccount != nil  && transactionsForAddress(activeAccount!).count > 0
         {
             DispatchQueue.main.async {
                 let userInfo = ["address": self.activeAccount!, "highestBlockNumber" : self.txBlockForAddress(address: self.activeAccount!)!] as [String : Any]
                 NotificationCenter.default.post(name: WalletNotification.DidSyncNotification.notification , object: self, userInfo: userInfo)
             }
-            
         }
     }
     
@@ -515,7 +466,6 @@ public class AccountManager
     func setEtherPrice(etherPrice:Float) -> Bool
     {
         return dataStore.setFloat(etherPrice, forKey: DataStoreKey.NetworkEtherPrice.rawValue)
-        
     }
     
     func setTxBlock(txBlock: Int, forAddress: Address)
@@ -535,7 +485,6 @@ public class AccountManager
     
     func gasPrice() -> BigNumber {
         let gasPrice = dataStore.string(forKey: DataStoreKey.NetworkGasPrice.rawValue)
-        
         if gasPrice != nil {
             return BigNumber(hexString: gasPrice)
         } else {
@@ -546,24 +495,16 @@ public class AccountManager
     func addTransactionInfos(transactionInfos: [TransactionInfo], address: Address) -> Int
     {
         var transactionsByHash = objectForKeyPrefix(keyPrefix: DataStoreKey.AccountTxsPrefix.rawValue, address: address) as! NSMutableDictionary
-        
         if transactionsByHash.count == 0 {
             transactionsByHash = NSMutableDictionary(capacity: 4)
         }
-        
         let currentTransactionInfos = transactions.object(forKey: address) as! [TransactionInfo]
         var changedTransactions =  [TransactionInfo]()
-        
         var changed = transactionInfos == currentTransactionInfos
-        
-        
         for transactionInfo in transactionInfos {
             let transactionHash = transactionInfo.transactionHash.hexString as NSObject
             let info = transactionsByHash.object(forKey: transactionHash) as! TransactionInfo
-            
             transactionsByHash.setObject(transactionInfo.dictionaryRepresentation(), forKey: transactionHash as! NSCopying)
-            
-            //
             if info.isEqual(transactionInfo)
             {
                 continue
@@ -571,31 +512,24 @@ public class AccountManager
             changedTransactions.append(transactionInfo)
             changed = true
         }
-        
         setObject(object: transactionsByHash, keyPrefix: DataStoreKey.AccountTxsPrefix.rawValue, address: address)
         if changed {
             transactions.setObject(transactionsForAddress(address), forKey: address)
         }
-        
         var highestBlockNumber = -1
-        
         if transactions.count > 0 {
             let lastTransactionInfo = transactions.allValues.last as! TransactionInfo
             highestBlockNumber = lastTransactionInfo.blockNumber
         }
-        
         if changed {
-            
             DispatchQueue.main.async {
                 let userInfo = ["address": address,"highestBlockNumber": highestBlockNumber] as [String : Any]
                 NotificationCenter.default.post(name: WalletNotification.AccountTransactionsUpdatedNotification.notification , object: self, userInfo: userInfo)
                 for transactionInfo in changedTransactions {
                     let userInfo = ["transaction": transactionInfo] as [String : Any]
                     NotificationCenter.default.post(name: WalletNotification.TransactionChangedNotification.notification , object: self, userInfo: userInfo)
-                    
                 }
             }
-            
         }
         return highestBlockNumber
     }
