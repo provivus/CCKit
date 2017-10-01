@@ -37,6 +37,8 @@ public class CCKClient {
     let ipcClient:IpcClient
     let networkId: NetworkId
     
+    var unlockedAccountDueToSwiftBug: Account?
+    
     public init?(ipfsHost: String, networkId: NetworkId, accountManager: AccountManager) {
         self.accountManager = accountManager
         self.ipfsClient = IpfsClient(ipfsHost:"ipfs.carechain.io" )!
@@ -235,6 +237,7 @@ public class CCKClient {
         return Promise<Account> { fulfill, reject in
             self.accountManager.unlockAccount(account.address, completion: { (unlockedAccount) in
                 if unlockedAccount != nil {
+                    self.unlockedAccountDueToSwiftBug = unlockedAccount!
                     fulfill(unlockedAccount!)
                 } else {
                     let error = NSError(domain: "XClaim", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unlock account failed"])
@@ -249,6 +252,7 @@ public class CCKClient {
         return Promise<Account> { fulfill, reject in
             self.accountManager.unlockAccount(address, completion: { (unlockedAccount) in
                 if unlockedAccount != nil {
+                    self.unlockedAccountDueToSwiftBug = unlockedAccount!
                     fulfill(unlockedAccount!)
                 } else {
                     let error = NSError(domain: "XClaim", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unlock account failed"])
@@ -414,7 +418,6 @@ public class CCKClient {
     public func newIdentity(netId: NetworkId) -> Promise<Array<Address>>
     {
         var sender:Address?
-        var unlockedAccount:Account?
         
         return Promise<Account> { fulfill, reject in
             self.accountManager.createAccount({ (account) in
@@ -429,10 +432,9 @@ public class CCKClient {
         }.then { account in
             self.unlock(account)
         }.then { unlocked -> Void in
-            unlockedAccount = unlocked
-            self.fundAddress(netId:netId, address: unlocked.address)
+            self.fundAddress(netId:netId, address: (self.unlockedAccountDueToSwiftBug?.address!)!)
         }.then { _ in
-            self.createIdentityTransaction(netId:netId, unlockedAccount: unlockedAccount!, contractName: "MetaIdentityManager",
+            self.createIdentityTransaction(netId:netId, unlockedAccount: self.unlockedAccountDueToSwiftBug!, contractName: "MetaIdentityManager",
                        methodName: "createIdentity",
                        parameterValues:  [sender!.checksumAddress, sender!.checksumAddress],
                        contractAddress: Address(string: networkInterface(netId)[1]) )
@@ -442,26 +444,23 @@ public class CCKClient {
     public func setupIdentity(netId: NetworkId, name: String, imgData: Data) -> Promise<Array<Address>>
     {
         var sender:Address?
-        var identity:Address?
-        var unlockedAccount:Account?
-        
+     
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         return self.newIdentity(netId:netId).then { addresses -> Void in
-            sender = addresses[0] ; identity = addresses[1]
+            sender = addresses[0]
             self.updateNonce(netId:netId, address: sender!)
         }.then { _ in
             self.unlock(sender!)
         }.then { unlocked in
-            //unlockedAccount = unlocked
             self.makeProfileObject(name: name, imgData: imgData, unlockedAccount: unlocked)
         }.then { objectHash in
-            self.connectRegistry(netId:netId, unlockedAccount: unlockedAccount! , registryAddress: Address(string:networkInterface(netId)[2]), objectHash: objectHash)
-        }/*.catch { error in
+            self.connectRegistry(netId:netId, unlockedAccount: self.unlockedAccountDueToSwiftBug! , registryAddress: Address(string:networkInterface(netId)[2]), objectHash: objectHash)
+        }.catch { error in
             print(error.localizedDescription)
         }.always {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }*/
+        }
     }
 }
 
