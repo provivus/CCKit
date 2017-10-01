@@ -304,7 +304,7 @@ public class AccountManager
         
     }
     
-    func debugTransactions()
+    public func debugTransactions()
     {
         if self.activeAccount != nil {
             let transactionInfos = transactionsForAddress(self.activeAccount!)
