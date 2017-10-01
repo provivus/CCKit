@@ -20,7 +20,6 @@ import SwiftKeccak
 import ABIKit
 import Gloss
 
-
 fileprivate func checksum(payload: ArraySlice<UInt8>) -> ArraySlice<UInt8>
 {
     let payloadData = Data(bytes: payload)
@@ -36,7 +35,6 @@ public class CCKClient {
     let ipfsClient:IpfsClient
     let ipcClient:IpcClient
     let networkId: NetworkId
-    
     var unlockedAccountDueToSwiftBug: Account?
     
     public init?(ipfsHost: String, networkId: NetworkId, accountManager: AccountManager) {
@@ -64,12 +62,9 @@ public class CCKClient {
                         switch response.result {
                         case .success:
                             let jdata = queryPath(response.data! as NSObject,"json/json") as? NSDictionary
-                            
                             let result = jdata?["result"]
-                            
                             if result is NSNull {
                                 print(".")
-                                //reject(NSError.cancelledError())
                             } else if let transactionReceipt = TransactionReceipt(from: result as! [AnyHashable : Any]) {
                                 if (transactionReceipt.blockNumber)>0 {
                                     print("waitForTransactionReceipt:",transactionReceipt)
@@ -79,7 +74,7 @@ public class CCKClient {
                             }
                         case .failure(let error):
                             reject(error)
-                        }
+                    }
                 }
             })
         }
@@ -171,17 +166,11 @@ public class CCKClient {
             }
             return Promise(value: [Address.zero()])
         }
-        
-        /*.catch(policy: .allErrors)  {error in
-         print(" Caught error", error.localizedDescription)
-         }*/
     }
     
     public func fundAddress(netId: NetworkId, address: Address) -> Promise<TransactionReceipt>
     {
-        
         let endpoint = networkInterface(netId)[3].replacingOccurrences(of: "$ADDRESS", with: address.checksumAddress)
-        
         let method = networkInterface(netId)[4]
         var httpMethod:HTTPMethod?
         
@@ -197,8 +186,6 @@ public class CCKClient {
             httpMethod = .post
             break
         }
-        
-        print("endpoint", endpoint)
         
         return Promise<Hash> { fulfill, reject in
             Alamofire.request(endpoint , method: httpMethod!)
@@ -224,11 +211,11 @@ public class CCKClient {
                     case .failure(let error):
                         reject(error)
                     }
-            }
-            }.then { hash in
-                self.waitForTransactionReceipt(netId:netId, hash: hash)
-            }.catch(policy: .allErrors)  {error in
-                print(" Caught error", error.localizedDescription)
+                }
+        }.then { hash in
+            self.waitForTransactionReceipt(netId:netId, hash: hash)
+        }.catch(policy: .allErrors)  { error in
+            print(" Caught error", error.localizedDescription)
         }
     }
     
@@ -279,15 +266,11 @@ public class CCKClient {
         return self.ipfsClient.putFile(fileURL: fileURL).then { imgMultiHash in
             return Promise<Data> { fulfill, reject in
                 let dict = NSMutableDictionary(capacity: 10)
-                
-                //var dict = [String:String]()
                 let identityMNID = identity.encodeMNID(chainID: "0x00")
                 let publicKey = sender.publicKey!
-                
                 let imgObj = ["@type":"ImageObject",
                               "name":"avatar",
                               "contentURL": "/ipfs/" + b58String(imgMultiHash)]
-                
                 dict.addEntries(from: ["@context":"http://schema.org",
                                        "@type":"Person",
                                        "name": name,
@@ -295,34 +278,31 @@ public class CCKClient {
                                        "publicKey": publicKey,
                                        "network": "carechain",
                                        "image": imgObj])
-                
-                
                 do {
                     let jsonData: Data = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions.prettyPrinted)
                     fulfill(jsonData)
                 } catch {
                     print(error.localizedDescription)
                 }
-                }.then { object in
-                    let jsonString = String(data: object, encoding: .utf8 )
+            }.then { object in
+                let jsonString = String(data: object, encoding: .utf8 )
+                let fileName = UUID().uuidString
+                let dirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                let fileURL = dirURL.appendingPathComponent(fileName).appendingPathExtension("json")
                     
-                    let fileName = UUID().uuidString
-                    let dirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-                    let fileURL = dirURL.appendingPathComponent(fileName).appendingPathExtension("json")
+                do {
+                    try jsonString?.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
+                } catch {
+                    print(error.localizedDescription)
+                }
                     
-                    do {
-                        try jsonString?.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
-                    } catch {
-                        print(error.localizedDescription)
-                    }
+                return self.ipfsClient.putFile(fileURL: fileURL)
                     
-                    return self.ipfsClient.putFile(fileURL: fileURL)
-                    
-                }.catch { error in
+            }.catch { error in
                     print(error.localizedDescription)
             }
-            }.catch { error in
-                print(error.localizedDescription)
+        }.catch { error in
+            print(error.localizedDescription)
         }
     }
     
@@ -394,11 +374,8 @@ public class CCKClient {
         let registrationIdentifier = "uPortProfileIPFS1220"
         let data = registrationIdentifier.data(using: .utf8)!
         let hexString = "0x"+data.map{ String(format:"%02x", $0) }.joined()
-        
         return self.ipcClient.callContract(netId:netId, address: sender, contractName: "UportRegistry", methodName: "get", parameterValues: [hexString,identity.checksumAddress,identity.checksumAddress], contractAddress: Address(string:networkInterface(netId)[2]) ).then { str in
-            
             let bn = BigNumber(hexString: str)
-            
             if bn != BigNumber.constantZero() {
                 let start = str.startIndex
                 let ind = str.index(start, offsetBy: 2)
@@ -418,7 +395,6 @@ public class CCKClient {
     public func newIdentity(netId: NetworkId) -> Promise<Array<Address>>
     {
         var sender:Address?
-        
         return Promise<Account> { fulfill, reject in
             self.accountManager.createAccount({ (account) in
                 if account.address != nil {
@@ -444,9 +420,7 @@ public class CCKClient {
     public func setupIdentity(netId: NetworkId, name: String, imgData: Data) -> Promise<Array<Address>>
     {
         var sender:Address?
-     
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        
         return self.newIdentity(netId:netId).then { addresses -> Void in
             sender = addresses[0]
             self.updateNonce(netId:netId, address: sender!)
@@ -464,12 +438,10 @@ public class CCKClient {
     }
 }
 
-
 extension Address {
     func encodeMNID(chainID: String) -> String
     {
         do {
-            
             var versionArray = [UInt8]()
             versionArray.append(1 as UInt8)
             
@@ -512,7 +484,6 @@ extension String {
     {
         do {
             let data = try self.decodeBase58()
-            
             let buf = [UInt8](data)
             let chainLength = data.count-24
             let versionArray = [buf[0]]
@@ -521,7 +492,6 @@ extension String {
             let checkArray = buf[(20 + chainLength)...(data.count-1)]
             let len = versionArray.count + chainArray.count + addrArray.count
             let payload = (versionArray + chainArray + addrArray)[0...(len-1)]
-            
             if checkArray == checksum(payload: payload) {
                 // Now get back to hex strings again
                 let x = chainArray.reduce("", { $0 + String(format: "%02x", $1)})
@@ -531,7 +501,6 @@ extension String {
         } catch {
             print(error)
         }
-        
         return []
     }
     
@@ -554,7 +523,6 @@ extension String {
         }
         return nil
     }
-    
 }
 
 
