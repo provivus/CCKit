@@ -16,4 +16,6 @@ FOUNDATION_EXPORT const unsigned char CCKitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <CCKit/PublicHeader.h>
 
+#import <CCKit/KeyChain.h>
+#import <CCKit/CachedDataStore.h>
 

@@ -16,6 +16,10 @@
 		04A9AAED1F8124A70073B652 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 04A9AAEB1F8124A70073B652 /* Cartfile */; };
 		04A9AAEF1F812E050073B652 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAEE1F812E050073B652 /* AccountManager.swift */; };
 		04A9AAF01F812E050073B652 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAEE1F812E050073B652 /* AccountManager.swift */; };
+		04B7427B1F813D820053491F /* KeyChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 04B742791F813D810053491F /* KeyChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		04B7427C1F813D820053491F /* KeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B7427A1F813D810053491F /* KeyChain.m */; };
+		04B7427F1F813E6D0053491F /* CachedDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 04B7427D1F813E6D0053491F /* CachedDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		04B742801F813E6D0053491F /* CachedDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B7427E1F813E6D0053491F /* CachedDataStore.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +42,10 @@
 		04A9AAE81F81246A0073B652 /* CCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCClient.swift; sourceTree = "<group>"; };
 		04A9AAEB1F8124A70073B652 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		04A9AAEE1F812E050073B652 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
+		04B742791F813D810053491F /* KeyChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyChain.h; sourceTree = "<group>"; };
+		04B7427A1F813D810053491F /* KeyChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyChain.m; sourceTree = "<group>"; };
+		04B7427D1F813E6D0053491F /* CachedDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedDataStore.h; sourceTree = "<group>"; };
+		04B7427E1F813E6D0053491F /* CachedDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CachedDataStore.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +89,10 @@
 		04A9AAD01F8124290073B652 /* CCKit */ = {
 			isa = PBXGroup;
 			children = (
+				04B7427D1F813E6D0053491F /* CachedDataStore.h */,
+				04B7427E1F813E6D0053491F /* CachedDataStore.m */,
+				04B742791F813D810053491F /* KeyChain.h */,
+				04B7427A1F813D810053491F /* KeyChain.m */,
 				04A9AAD11F8124290073B652 /* CCKit.h */,
 				04A9AAD21F8124290073B652 /* Info.plist */,
 				04A9AAE81F81246A0073B652 /* CCClient.swift */,
@@ -105,6 +117,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04B7427B1F813D820053491F /* KeyChain.h in Headers */,
+				04B7427F1F813E6D0053491F /* CachedDataStore.h in Headers */,
 				04A9AADF1F8124290073B652 /* CCKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -211,8 +225,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04B7427C1F813D820053491F /* KeyChain.m in Sources */,
 				04A9AAE91F81246A0073B652 /* CCClient.swift in Sources */,
 				04A9AAEF1F812E050073B652 /* AccountManager.swift in Sources */,
+				04B742801F813E6D0053491F /* CachedDataStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,9 +18,20 @@ import SwiftBase58
 import SwiftBaseX
 import SwiftKeccak
 import ABIKit
+import Gloss
+
+
+fileprivate func checksum(payload: ArraySlice<UInt8>) -> ArraySlice<UInt8>
+{
+    let payloadData = Data(bytes: payload)
+    let hashData = payloadData.sha3Final() // [236, 174, 187, 181]
+    let hashArraySlice = [UInt8](hashData)[0...3]
+    return hashArraySlice
+}
 
 class CCKClient {
     
+    var transactionNonce:UInt = 0
     let accountManager:AccountManager
     let ipfsClient:IpfsClient
     let ipcClient:IpcClient
@@ -72,69 +83,11 @@ class CCKClient {
         }
     }
     
-    public func sendMetaTransaction(netId: NetworkId, address: Address, contractName: String, methodName: String, parameterValues: [String], contractAddress: Address?) -> Promise<Array<String>>
-    {
-        //print("sendMetaTransaction ",address, "parameterValues ", parameterValues)
-        return Promise<Transaction> { fulfill, reject in
-            if let contractData = readJson(fileName: "contracts/"+contractName) , let contractInterface = Contract(data: contractData) {
-                
-                let trans = Transaction(from: address )
-                
-                if contractAddress != nil { // transact with an already deployed contract
-                    trans.toAddress = contractAddress
-                    if let method = contractInterface.find(name: methodName) {
-                        let str = method.encode(values: parameterValues)
-                        //print("Encoded method call", str)
-                        let sec = SecureData(hexString: str)
-                        trans.data = (sec?.data())!
-                    }
-                } else { // deploy a contract
-                    trans.toAddress = trans.fromAddress
-                    let code = contractInterface.unlinkedBinary
-                    let sec = SecureData(hexString: code)
-                    trans.data = (sec?.data())!
-                }
-                fulfill(trans)
-            } else {
-                let error = NSError(domain: "XClaim", code: 1, userInfo: [NSLocalizedDescriptionKey: "Deploy contract"])
-                reject(error)
-            }
-            }.then { transaction in
-                // print("sendMetaTransaction ",transaction)
-                self.ipcClient.eth_sendTransaction(netId: netId, transaction: transaction)
-            }.then { hash in
-                self.waitForTransactionReceipt(netId:netId, hash: hash)
-            }.then { transReceipt in
-                
-                
-                if let logs = transReceipt.logs {
-                    
-                    let dictArray = logs  as! [Dictionary<String, Any>]
-                    
-                    //                   print("metaTransaction:", dictArray)
-                    
-                    
-                    for obj in dictArray {
-                        // The addresses we need are possibly encoded in data??
-                        let encoded = obj["data"] as! String
-                        
-                        //                       print(encoded)
-                        
-                        let addressStrings = encoded.decodeABI()
-                        return Promise(value: addressStrings)
-                    }
-                }
-                return Promise(value: [])
-        }
-    }
-    
-    
-    public func sendTransaction(netId: NetworkId, address: Address, contractName: String, methodName: String, parameterValues: [String], contractAddress: Address?) -> Promise<Array<String>>
+    public func sendTransaction(netId: NetworkId, unlockedAccount: Account, contractName: String, methodName: String, parameterValues: [String], contractAddress: Address?) -> Promise<Array<String>>
     {
         return Promise<Transaction> { fulfill, reject in
             if let contractData = readJson(fileName: "contracts/"+contractName) , let contractInterface = Contract(data: contractData) {
-                
-                let trans = Transaction(from: address )
+                let trans = Transaction(from: unlockedAccount.address )
                 if contractAddress != nil { // transact with an already deployed contract
                     trans.toAddress = contractAddress
                     if let method = contractInterface.find(name: methodName) {
@@ -155,7 +108,7 @@ class CCKClient {
                 reject(error)
             }
             }.then {transaction in
-                self.ipcClient.eth_sendRawTransaction(netId:netId, address:address, transaction:transaction)
+                self.ipcClient.eth_sendRawTransaction(netId:netId, unlockedAccount:unlockedAccount, transaction:transaction)
             }.then { hash in
                 self.waitForTransactionReceipt(netId:netId,hash: hash)
             }.then { transReceipt in
@@ -175,13 +128,11 @@ class CCKClient {
         }
     }
     
-    public func createIdentityTransaction(netId: NetworkId, address: Address, contractName: String, methodName: String, parameterValues: [String], contractAddress: Address?) -> Promise<Array<Address>>
+    public func createIdentityTransaction(netId: NetworkId, unlockedAccount: Account, contractName: String, methodName: String, parameterValues: [String], contractAddress: Address?) -> Promise<Array<Address>>
     {
         return Promise<Transaction> { fulfill, reject in
             if let contractData = readJson(fileName: "contracts/"+contractName) , let contractInterface = Contract(data: contractData) {
-                
-                let trans = Transaction(from: address )
-                
+                let trans = Transaction(from: unlockedAccount.address )
                 if contractAddress != nil { // transact with an already deployed contract
                     trans.toAddress = contractAddress
                     if let method = contractInterface.find(name: methodName) {
@@ -202,7 +153,7 @@ class CCKClient {
                 reject(error)
             }
         }.then {transaction in
-            self.ipcClient.eth_sendRawTransaction(netId:netId, address:address, transaction: transaction)
+            self.ipcClient.eth_sendRawTransaction(netId:netId, unlockedAccount: unlockedAccount, transaction: transaction)
         }.then { hash in
             self.waitForTransactionReceipt(netId:netId,hash: hash)
         }.then { transReceipt in
@@ -211,7 +162,8 @@ class CCKClient {
                 for obj in dictArray {
                     if let topics = obj["topics"] as? [String] {
                         let addressStrings = topics[1].decodeABI()
-                        return Promise(value: [address, Address(string: addressStrings[0]) ])
+                        unlockedAccount.proxyAddress = Address(string: addressStrings[0])
+                        return Promise(value: [unlockedAccount.address, Address(string: addressStrings[0]) ])
                     }
                 }
             }
@@ -278,12 +230,12 @@ class CCKClient {
         }
     }
     
-    public func unlock(address: Address) -> Promise<Address>
+    public func unlock(_ account: Account) -> Promise<Account>
     {
-        return Promise<Address> { fulfill, reject in
-            self.accountManager.unlockAccount(address, completion: { (unlockedAccount) in
+        return Promise<Account> { fulfill, reject in
+            self.accountManager.unlockAccount(account.address, completion: { (unlockedAccount) in
                 if unlockedAccount != nil {
-                    fulfill((unlockedAccount?.address)!)
+                    fulfill(unlockedAccount!)
                 } else {
                     let error = NSError(domain: "XClaim", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unlock account failed"])
                     reject(error)
@@ -292,11 +244,27 @@ class CCKClient {
         }
     }
     
-    public func makeProfileObject(name:String, imgData: Data, sender: Address, identity: Address) -> Promise<Multihash>
+    public func unlock(_ address: Address) -> Promise<Account>
+    {
+        return Promise<Account> { fulfill, reject in
+            self.accountManager.unlockAccount(address, completion: { (unlockedAccount) in
+                if unlockedAccount != nil {
+                    fulfill(unlockedAccount!)
+                } else {
+                    let error = NSError(domain: "XClaim", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unlock account failed"])
+                    reject(error)
+                }
+            })
+        }
+    }
+
+    public func makeProfileObject(name:String, imgData: Data, unlockedAccount: Account) -> Promise<Multihash>
     {
         let fileName = UUID().uuidString
         let dirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let fileURL = dirURL.appendingPathComponent(fileName).appendingPathExtension("png")
+        let sender = unlockedAccount.address!
+        let identity = unlockedAccount.proxyAddress!
         
         do {
             try imgData.write(to: fileURL, options: .atomicWrite)
@@ -363,13 +331,15 @@ class CCKClient {
         }
     }
     
-    public func forwardTo(netId: NetworkId, sender: Address, identity: Address, destination: Address, value: UInt32, registryDigest: String)  -> Promise<Array<String>>
+    public func forwardTo(netId: NetworkId, unlockedAccount: Account, destination: Address, value: UInt32, registryDigest: String)  -> Promise<Array<String>>
     {
         var dataStr:String?
         let registrationIdentifier = "uPortProfileIPFS1220"
         let data = registrationIdentifier.data(using: .utf8)!
         let key = "0x"+data.map{ String(format:"%02x", $0) }.joined()
-        
+        let identity = unlockedAccount.proxyAddress!
+        let sender = unlockedAccount.address!
+
         if let contractData = readJson(fileName: "contracts/UportRegistry") , let contractInterface = Contract(data: contractData) {
             if let method = contractInterface.find(name: "set") {
                 dataStr = method.encode(values: [key.lowercased(), identity.checksumAddress.lowercased(), registryDigest.lowercased()])?.lowercased()
@@ -381,30 +351,17 @@ class CCKClient {
         if let contractData = readJson(fileName: "contracts/MetaIdentityManager") , let contractInterface = Contract(data: contractData) {
             if let method = contractInterface.find(name: "forwardTo") {
                 
-                print("encode call to UportRegistry:set")
-                print("key: ",key.lowercased())
-                print("identity :", identity.checksumAddress.lowercased())
-                print("registryValue: ", registryDigest.lowercased())
-                print("encoded: ", dataStr!)
-                
-                print("encode call to MetaIdentityManager:forwardTo")
-                print("sender: ",sender.checksumAddress.lowercased())
-                print("identity :", identity.checksumAddress.lowercased())
-                print("destination (registry): ", destination.checksumAddress.lowercased())
-                print("value: ", valStr)
-                print("data: ", dataStr!)
-                
                 let forwardTo = method.encode(values: [sender.checksumAddress, identity.checksumAddress, destination.checksumAddress, valStr, dataStr!])?.lowercased()
                 print("encoded", forwardTo!)
             }
         }
-        return self.sendTransaction(netId:netId, address:sender, contractName: "MetaIdentityManager",
+        return self.sendTransaction(netId:netId, unlockedAccount: unlockedAccount, contractName: "MetaIdentityManager",
                                     methodName: "forwardTo",
                                     parameterValues:  [sender.checksumAddress.lowercased(), identity.checksumAddress.lowercased(), destination.checksumAddress.lowercased(),valStr, dataStr!],
                                     contractAddress: Address(string: networkInterface(netId)[1]))
     }
     
-    public func connectRegistry(netId: NetworkId, sender: Address, identity: Address, registryAddress: Address, objectHash: Multihash) -> Promise<Array<Address>>
+    public func connectRegistry(netId: NetworkId, unlockedAccount: Account, registryAddress: Address, objectHash: Multihash) -> Promise<Array<Address>>
     {
         print("\n\n\n=======================================")
         
@@ -416,11 +373,11 @@ class CCKClient {
             let startIndex = hex.index(profileHashStartIndex, offsetBy: 4)
             let registryDigest = "0x" + hex.substring(from: startIndex)
             print("ipfs ", profileHash, " hash", hex)
-            return self.updateNonce(netId:netId, address: sender).then { nonce in
-                self.forwardTo(netId:netId, sender: sender, identity: identity, destination: registryAddress , value: 0, registryDigest: registryDigest)
+            return self.updateNonce(netId:netId, address: unlockedAccount.address).then { nonce in
+                self.forwardTo(netId:netId, unlockedAccount: unlockedAccount, destination: registryAddress , value: 0, registryDigest: registryDigest)
                 //print("=======================================\n\n\n")
                 }.then { _ in
-                    return Promise(value: [sender,identity])
+                    return Promise(value: [unlockedAccount.address,unlockedAccount.proxyAddress])
             }
         } catch {
             print(error.localizedDescription)
@@ -453,10 +410,11 @@ class CCKClient {
             }
         }
     }
-    
+
     public func newIdentity(netId: NetworkId) -> Promise<Array<Address>>
     {
         var sender:Address?
+        var unlockedAccount:Account?
         
         return Promise<Account> { fulfill, reject in
             self.accountManager.createAccount({ (account) in
@@ -468,15 +426,16 @@ class CCKClient {
                     reject(error)
                 }
             })
-            }.then {  account in
-                self.unlock(address: account.address)
-            }.then { address in
-                self.fundAddress(netId:netId,address: address)
-            }.then { _ in
-                self.createIdentityTransaction(netId:netId, address:sender!, contractName: "MetaIdentityManager",
-                                               methodName: "createIdentity",
-                                               parameterValues:  [sender!.checksumAddress, sender!.checksumAddress],
-                                               contractAddress: Address(string: networkInterface(netId)[1]) )
+        }.then { account in
+            self.unlock(account)
+        }.then { unlocked -> Void in
+            unlockedAccount = unlocked
+            self.fundAddress(netId:netId, address: unlocked.address)
+        }.then { _ in
+            self.createIdentityTransaction(netId:netId, unlockedAccount: unlockedAccount!, contractName: "MetaIdentityManager",
+                       methodName: "createIdentity",
+                       parameterValues:  [sender!.checksumAddress, sender!.checksumAddress],
+                       contractAddress: Address(string: networkInterface(netId)[1]) )
         }
     }
     
@@ -484,31 +443,28 @@ class CCKClient {
     {
         var sender:Address?
         var identity:Address?
+        var unlockedAccount:Account?
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         return self.newIdentity(netId:netId).then { addresses -> Void in
             sender = addresses[0] ; identity = addresses[1]
             self.updateNonce(netId:netId, address: sender!)
-            }.then { nonce in
-                self.makeProfileObject(name: name, imgData: imgData, sender: sender!, identity: identity!)
-            }.then { objectHash in
-                self.connectRegistry(netId:netId,  sender: sender!, identity: identity!, registryAddress: Address(string:networkInterface(netId)[2]), objectHash: objectHash)
-            }.catch { error in
-                print(error.localizedDescription)
-            }.always {
-                UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
+        }.then { _ in
+            self.unlock(sender!)
+        }.then { unlocked in
+            //unlockedAccount = unlocked
+            self.makeProfileObject(name: name, imgData: imgData, unlockedAccount: unlocked)
+        }.then { objectHash in
+            self.connectRegistry(netId:netId, unlockedAccount: unlockedAccount! , registryAddress: Address(string:networkInterface(netId)[2]), objectHash: objectHash)
+        }/*.catch { error in
+            print(error.localizedDescription)
+        }.always {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        }*/
     }
 }
 
-public func checksum(payload: ArraySlice<UInt8>) -> ArraySlice<UInt8>
-{
-    let payloadData = Data(bytes: payload)
-    let hashData = payloadData.sha3Final() // [236, 174, 187, 181]
-    let hashArraySlice = [UInt8](hashData)[0...3]
-    return hashArraySlice
-}
 
 extension Address {
     func encodeMNID(chainID: String) -> String

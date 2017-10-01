@@ -1,4 +1,5 @@
 import EtherKit
+import IpcKit
 
 enum WalletNotification: String {
     case AddedAccountNotification                 = "WalletAddedAccountNotification"
@@ -138,16 +139,13 @@ class AccountManager
         if transactionsByHash == nil {
             return NSMutableArray(capacity: 4) as! [TransactionInfo]
         }
-        
         let transactionsDict = transactionsByHash as! [String:[AnyHashable:Any]]
         let transactionInfos = NSMutableArray(capacity: transactionsDict.count)
+        let arr = Array(transactionsDict)
         
-        
-        for info in transactionsDict.array {
+        for info in arr {
             let transactionInfo = TransactionInfo(from: info.value)
-            
             //print("transactionInfo",info, transactionInfo)
-            
             if transactionInfo == nil {
                 print("Bad Transaction: ", info)
                 continue
@@ -155,7 +153,6 @@ class AccountManager
             transactionInfos.add(transactionInfo!)
         }
         sortTransactions(transactionInfos: transactionInfos as! [TransactionInfo])
-        
         return transactionInfos as! [TransactionInfo]
     }
     
@@ -197,7 +194,6 @@ class AccountManager
     
     
     func unlockAccount(_ address: Address, completion: @escaping ( _ account: Account?) -> Void ) {
-        
         let json = getJSON(address: address)
         let password = "secret"
         
@@ -302,7 +298,7 @@ class AccountManager
         }
         
         if orderedAddresses.count > 0 {
-            account = orderedAddresses[0] as! Address
+            account = orderedAddresses[0] as? Address
             setActiveAccount(address: account!)
         }
         
@@ -386,21 +382,16 @@ class AccountManager
     }
     
     
-    func refresh(netId: NetworkId, _ callback: @escaping (_: Bool) -> Void)
+    func refresh(netId: NetworkId, client: CCKClient, _ callback: @escaping (_: Bool) -> Void)
     {
-        print("refresh")
-        
-        let client = CCKClient(accountManager: self)
-        
         for address in self.orderedAddresses {
-            
-            _ = client?.eth_getBalance(netId:netId, address: address as! Address, tag: .pending).then { balance -> Void in
+            _ = client.ipcClient.eth_getBalance(netId:netId, address: address as! Address, tag: .pending).then { balance -> Void in
                 //print("getBalance ",balance)
                 self.setSyncDate()
                 _ = self.setBalance(address: address as! Address, balanceWei: balance)
             }
             
-            _ = client?.eth_getTransactionCount(netId:netId,address: address as! Address, tag: .pending).then { nonce -> Void in
+            _ = client.ipcClient.eth_getTransactionCount(netId:netId,address: address as! Address, tag: .pending).then { nonce -> Void in
                 
                 //print("getTransactionCount: ",nonce, "address ", address)
                 
@@ -418,12 +409,12 @@ class AccountManager
              }
              */
             
-            _ = client?.eth_getGasPrice(netId:netId).then { gasPrice -> Void in
+            _ = client.ipcClient.eth_getGasPrice(netId:netId).then { gasPrice -> Void in
                 //print("getGasPrice",gasPrice)
                 self.setGasPrice(gasPrice: gasPrice)
             }
             
-            _ = client?.eth_getBlockNumber(netId:netId).then { blockNumber -> Void in
+            _ = client.ipcClient.eth_getBlockNumber(netId:netId).then { blockNumber -> Void in
                 //print("getBlockNumber",blockNumber)
                 self.setBlocknumber(blockNumber: blockNumber)
             }
@@ -513,7 +504,7 @@ class AccountManager
     
     func blockNumber() -> BlockTag
     {
-        return dataStore.integer(forKey: DataStoreKey.NetworkBlockNumber.rawValue)
+        return BlockTag(rawValue: dataStore.integer(forKey: DataStoreKey.NetworkBlockNumber.rawValue))!
     }
     
     func etherPrice() -> Float
@@ -606,45 +597,8 @@ class AccountManager
             }
             
         }
-        
         return highestBlockNumber
     }
-    /*
-     func
-     NSMutableArray *pending = [NSMutableArray array];
-     NSMutableArray *inProgress = [NSMutableArray array];
-     NSMutableArray *confirmed = [NSMutableArray array];
-     
-     Address *activeAccount = _wallet.activeAccount;
-     NSUInteger blockNumber = _wallet.blockNumber;
-     
-     int minInProgressConfirmations = CONFIRMED_COUNT;
-     int maxInProgressConfirmations = 0;
-     
-     NSUInteger transactionCount = [_wallet transactionCountForAddress:activeAccount];
-     for (NSUInteger i = 0; i < transactionCount; i++) {
-     TransactionInfo *transactionInfo = [_wallet transactionForAddress:activeAccount index:i];
-     
-     if (transactionInfo.blockNumber == -1) {
-     [pending addObject:transactionInfo];
-     
-     } else {
-     int confirmations = (int)(blockNumber - transactionInfo.blockNumber + 1);
-     if (confirmations < CONFIRMED_COUNT) {
-     [inProgress addObject:transactionInfo];
-     if (confirmations < minInProgressConfirmations) {
-     minInProgressConfirmations = confirmations;
-     }
-     if (confirmations > maxInProgressConfirmations) {
-     maxInProgressConfirmations = confirmations;
-     }
-     } else {
-     [confirmed addObject:transactionInfo];
-     }
-     }
-     }
-     */
-    
 }
 
 
