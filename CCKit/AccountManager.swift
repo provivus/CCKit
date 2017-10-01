@@ -49,7 +49,7 @@ enum DataStoreKey: String {
     case RegistryFileName           = "REGISTRY_FILE_NAME"
 }
 
-class AccountManager
+public class AccountManager
 {
     //static let sharedInstance = AccountManager("us.proviv.claim")
     var keyChainKey = ""
@@ -64,7 +64,7 @@ class AccountManager
     var firstRefreshDone = false
     
     // let keychainKey
-    init?(_ keyChainKey: String) {
+    public init?(_ keyChainKey: String) {
         self.keyChainKey = keyChainKey
         dataStore = CachedDataStore(key: keyChainKey)
         

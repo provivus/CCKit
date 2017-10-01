@@ -10,8 +10,8 @@
 		04A9AAD81F8124290073B652 /* CCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A9AACE1F8124290073B652 /* CCKit.framework */; };
 		04A9AADD1F8124290073B652 /* CCKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AADC1F8124290073B652 /* CCKitTests.swift */; };
 		04A9AADF1F8124290073B652 /* CCKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A9AAD11F8124290073B652 /* CCKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		04A9AAE91F81246A0073B652 /* CCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAE81F81246A0073B652 /* CCClient.swift */; };
-		04A9AAEA1F81246A0073B652 /* CCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAE81F81246A0073B652 /* CCClient.swift */; };
+		04A9AAE91F81246A0073B652 /* CCKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAE81F81246A0073B652 /* CCKClient.swift */; };
+		04A9AAEA1F81246A0073B652 /* CCKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAE81F81246A0073B652 /* CCKClient.swift */; };
 		04A9AAEC1F8124A70073B652 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 04A9AAEB1F8124A70073B652 /* Cartfile */; };
 		04A9AAED1F8124A70073B652 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 04A9AAEB1F8124A70073B652 /* Cartfile */; };
 		04A9AAEF1F812E050073B652 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAEE1F812E050073B652 /* AccountManager.swift */; };
@@ -39,7 +39,7 @@
 		04A9AAD71F8124290073B652 /* CCKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CCKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		04A9AADC1F8124290073B652 /* CCKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCKitTests.swift; sourceTree = "<group>"; };
 		04A9AADE1F8124290073B652 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		04A9AAE81F81246A0073B652 /* CCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCClient.swift; sourceTree = "<group>"; };
+		04A9AAE81F81246A0073B652 /* CCKClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCKClient.swift; sourceTree = "<group>"; };
 		04A9AAEB1F8124A70073B652 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		04A9AAEE1F812E050073B652 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		04B742791F813D810053491F /* KeyChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyChain.h; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 				04B7427A1F813D810053491F /* KeyChain.m */,
 				04A9AAD11F8124290073B652 /* CCKit.h */,
 				04A9AAD21F8124290073B652 /* Info.plist */,
-				04A9AAE81F81246A0073B652 /* CCClient.swift */,
+				04A9AAE81F81246A0073B652 /* CCKClient.swift */,
 				04A9AAEE1F812E050073B652 /* AccountManager.swift */,
 			);
 			path = CCKit;
@@ -226,7 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04B7427C1F813D820053491F /* KeyChain.m in Sources */,
-				04A9AAE91F81246A0073B652 /* CCClient.swift in Sources */,
+				04A9AAE91F81246A0073B652 /* CCKClient.swift in Sources */,
 				04A9AAEF1F812E050073B652 /* AccountManager.swift in Sources */,
 				04B742801F813E6D0053491F /* CachedDataStore.m in Sources */,
 			);
@@ -236,7 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04A9AAEA1F81246A0073B652 /* CCClient.swift in Sources */,
+				04A9AAEA1F81246A0073B652 /* CCKClient.swift in Sources */,
 				04A9AADD1F8124290073B652 /* CCKitTests.swift in Sources */,
 				04A9AAF01F812E050073B652 /* AccountManager.swift in Sources */,
 			);
