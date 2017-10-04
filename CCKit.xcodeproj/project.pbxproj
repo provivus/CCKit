@@ -7,15 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0480A8441F854F0700204C4F /* ABIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8251F854EC600204C4F /* ABIKit.framework */; };
+		0480A8451F854F0700204C4F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A82D1F854EC800204C4F /* Alamofire.framework */; };
+		0480A8461F854F0700204C4F /* Bits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A82E1F854EC800204C4F /* Bits.framework */; };
+		0480A8471F854F0700204C4F /* Debugging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8231F854EC500204C4F /* Debugging.framework */; };
+		0480A8481F854F0700204C4F /* EtherKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8281F854EC700204C4F /* EtherKit.framework */; };
+		0480A8491F854F0700204C4F /* Gloss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8221F854EC500204C4F /* Gloss.framework */; };
+		0480A84A1F854F0700204C4F /* IpcKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8291F854EC700204C4F /* IpcKit.framework */; };
+		0480A84B1F854F0700204C4F /* IpfsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A82A1F854EC800204C4F /* IpfsKit.framework */; };
+		0480A84C1F854F0700204C4F /* PMKAlamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8241F854EC500204C4F /* PMKAlamofire.framework */; };
+		0480A84D1F854F0700204C4F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8261F854EC600204C4F /* PromiseKit.framework */; };
+		0480A84E1F854F0700204C4F /* SwiftBase58.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A82F1F854EC800204C4F /* SwiftBase58.framework */; };
+		0480A84F1F854F0700204C4F /* SwiftBaseX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8211F854EC500204C4F /* SwiftBaseX.framework */; };
+		0480A8501F854F0700204C4F /* SwiftGMP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A82B1F854EC800204C4F /* SwiftGMP.framework */; };
+		0480A8511F854F0700204C4F /* SwiftHex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8271F854EC600204C4F /* SwiftHex.framework */; };
+		0480A8521F854F0700204C4F /* SwiftIpfsApi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A81F1F854EC500204C4F /* SwiftIpfsApi.framework */; };
+		0480A8531F854F0700204C4F /* SwiftKeccak.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A82C1F854EC800204C4F /* SwiftKeccak.framework */; };
+		0480A8541F854F0700204C4F /* SwiftMultiaddr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8301F854EC800204C4F /* SwiftMultiaddr.framework */; };
+		0480A8551F854F0700204C4F /* SwiftMultihash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A81E1F854EC500204C4F /* SwiftMultihash.framework */; };
+		0480A8561F854F0700204C4F /* VarInt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0480A8201F854EC500204C4F /* VarInt.framework */; };
 		04A9AAD81F8124290073B652 /* CCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A9AACE1F8124290073B652 /* CCKit.framework */; };
 		04A9AADD1F8124290073B652 /* CCKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AADC1F8124290073B652 /* CCKitTests.swift */; };
 		04A9AADF1F8124290073B652 /* CCKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 04A9AAD11F8124290073B652 /* CCKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		04A9AAE91F81246A0073B652 /* CCKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAE81F81246A0073B652 /* CCKClient.swift */; };
-		04A9AAEA1F81246A0073B652 /* CCKClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAE81F81246A0073B652 /* CCKClient.swift */; };
 		04A9AAEC1F8124A70073B652 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 04A9AAEB1F8124A70073B652 /* Cartfile */; };
 		04A9AAED1F8124A70073B652 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 04A9AAEB1F8124A70073B652 /* Cartfile */; };
 		04A9AAEF1F812E050073B652 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAEE1F812E050073B652 /* AccountManager.swift */; };
-		04A9AAF01F812E050073B652 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A9AAEE1F812E050073B652 /* AccountManager.swift */; };
 		04B7427B1F813D820053491F /* KeyChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 04B742791F813D810053491F /* KeyChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		04B7427C1F813D820053491F /* KeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B7427A1F813D810053491F /* KeyChain.m */; };
 		04B7427F1F813E6D0053491F /* CachedDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 04B7427D1F813E6D0053491F /* CachedDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -33,6 +50,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0480A81E1F854EC500204C4F /* SwiftMultihash.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftMultihash.framework; path = Carthage/Build/iOS/SwiftMultihash.framework; sourceTree = "<group>"; };
+		0480A81F1F854EC500204C4F /* SwiftIpfsApi.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftIpfsApi.framework; path = Carthage/Build/iOS/SwiftIpfsApi.framework; sourceTree = "<group>"; };
+		0480A8201F854EC500204C4F /* VarInt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VarInt.framework; path = Carthage/Build/iOS/VarInt.framework; sourceTree = "<group>"; };
+		0480A8211F854EC500204C4F /* SwiftBaseX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftBaseX.framework; path = Carthage/Build/iOS/SwiftBaseX.framework; sourceTree = "<group>"; };
+		0480A8221F854EC500204C4F /* Gloss.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Gloss.framework; path = Carthage/Build/iOS/Gloss.framework; sourceTree = "<group>"; };
+		0480A8231F854EC500204C4F /* Debugging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Debugging.framework; path = Carthage/Build/iOS/Debugging.framework; sourceTree = "<group>"; };
+		0480A8241F854EC500204C4F /* PMKAlamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PMKAlamofire.framework; path = Carthage/Build/iOS/PMKAlamofire.framework; sourceTree = "<group>"; };
+		0480A8251F854EC600204C4F /* ABIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ABIKit.framework; path = Carthage/Build/iOS/ABIKit.framework; sourceTree = "<group>"; };
+		0480A8261F854EC600204C4F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
+		0480A8271F854EC600204C4F /* SwiftHex.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftHex.framework; path = Carthage/Build/iOS/SwiftHex.framework; sourceTree = "<group>"; };
+		0480A8281F854EC700204C4F /* EtherKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EtherKit.framework; path = Carthage/Build/iOS/EtherKit.framework; sourceTree = "<group>"; };
+		0480A8291F854EC700204C4F /* IpcKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IpcKit.framework; path = Carthage/Build/iOS/IpcKit.framework; sourceTree = "<group>"; };
+		0480A82A1F854EC800204C4F /* IpfsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IpfsKit.framework; path = Carthage/Build/iOS/IpfsKit.framework; sourceTree = "<group>"; };
+		0480A82B1F854EC800204C4F /* SwiftGMP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftGMP.framework; path = Carthage/Build/iOS/SwiftGMP.framework; sourceTree = "<group>"; };
+		0480A82C1F854EC800204C4F /* SwiftKeccak.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftKeccak.framework; path = Carthage/Build/iOS/SwiftKeccak.framework; sourceTree = "<group>"; };
+		0480A82D1F854EC800204C4F /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		0480A82E1F854EC800204C4F /* Bits.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bits.framework; path = Carthage/Build/iOS/Bits.framework; sourceTree = "<group>"; };
+		0480A82F1F854EC800204C4F /* SwiftBase58.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftBase58.framework; path = Carthage/Build/iOS/SwiftBase58.framework; sourceTree = "<group>"; };
+		0480A8301F854EC800204C4F /* SwiftMultiaddr.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftMultiaddr.framework; path = Carthage/Build/iOS/SwiftMultiaddr.framework; sourceTree = "<group>"; };
 		04A9AACE1F8124290073B652 /* CCKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CCKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		04A9AAD11F8124290073B652 /* CCKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCKit.h; sourceTree = "<group>"; };
 		04A9AAD21F8124290073B652 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -53,6 +89,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0480A8441F854F0700204C4F /* ABIKit.framework in Frameworks */,
+				0480A8451F854F0700204C4F /* Alamofire.framework in Frameworks */,
+				0480A8461F854F0700204C4F /* Bits.framework in Frameworks */,
+				0480A8471F854F0700204C4F /* Debugging.framework in Frameworks */,
+				0480A8481F854F0700204C4F /* EtherKit.framework in Frameworks */,
+				0480A8491F854F0700204C4F /* Gloss.framework in Frameworks */,
+				0480A84A1F854F0700204C4F /* IpcKit.framework in Frameworks */,
+				0480A84B1F854F0700204C4F /* IpfsKit.framework in Frameworks */,
+				0480A84C1F854F0700204C4F /* PMKAlamofire.framework in Frameworks */,
+				0480A84D1F854F0700204C4F /* PromiseKit.framework in Frameworks */,
+				0480A84E1F854F0700204C4F /* SwiftBase58.framework in Frameworks */,
+				0480A84F1F854F0700204C4F /* SwiftBaseX.framework in Frameworks */,
+				0480A8501F854F0700204C4F /* SwiftGMP.framework in Frameworks */,
+				0480A8511F854F0700204C4F /* SwiftHex.framework in Frameworks */,
+				0480A8521F854F0700204C4F /* SwiftIpfsApi.framework in Frameworks */,
+				0480A8531F854F0700204C4F /* SwiftKeccak.framework in Frameworks */,
+				0480A8541F854F0700204C4F /* SwiftMultiaddr.framework in Frameworks */,
+				0480A8551F854F0700204C4F /* SwiftMultihash.framework in Frameworks */,
+				0480A8561F854F0700204C4F /* VarInt.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +122,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0480A81D1F854EC400204C4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0480A8251F854EC600204C4F /* ABIKit.framework */,
+				0480A82D1F854EC800204C4F /* Alamofire.framework */,
+				0480A82E1F854EC800204C4F /* Bits.framework */,
+				0480A8231F854EC500204C4F /* Debugging.framework */,
+				0480A8281F854EC700204C4F /* EtherKit.framework */,
+				0480A8221F854EC500204C4F /* Gloss.framework */,
+				0480A8291F854EC700204C4F /* IpcKit.framework */,
+				0480A82A1F854EC800204C4F /* IpfsKit.framework */,
+				0480A8241F854EC500204C4F /* PMKAlamofire.framework */,
+				0480A8261F854EC600204C4F /* PromiseKit.framework */,
+				0480A82F1F854EC800204C4F /* SwiftBase58.framework */,
+				0480A8211F854EC500204C4F /* SwiftBaseX.framework */,
+				0480A82B1F854EC800204C4F /* SwiftGMP.framework */,
+				0480A8271F854EC600204C4F /* SwiftHex.framework */,
+				0480A81F1F854EC500204C4F /* SwiftIpfsApi.framework */,
+				0480A82C1F854EC800204C4F /* SwiftKeccak.framework */,
+				0480A8301F854EC800204C4F /* SwiftMultiaddr.framework */,
+				0480A81E1F854EC500204C4F /* SwiftMultihash.framework */,
+				0480A8201F854EC500204C4F /* VarInt.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		04A9AAC41F8124290073B652 = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +155,7 @@
 				04A9AAD01F8124290073B652 /* CCKit */,
 				04A9AADB1F8124290073B652 /* CCKitTests */,
 				04A9AACF1F8124290073B652 /* Products */,
+				0480A81D1F854EC400204C4F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -236,9 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04A9AAEA1F81246A0073B652 /* CCKClient.swift in Sources */,
 				04A9AADD1F8124290073B652 /* CCKitTests.swift in Sources */,
-				04A9AAF01F812E050073B652 /* AccountManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +505,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = BH7Z7SE66T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CCKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = us.proviv.CCKitTests;
@@ -440,6 +524,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = BH7Z7SE66T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CCKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = us.proviv.CCKitTests;
